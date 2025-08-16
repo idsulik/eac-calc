@@ -1,5 +1,5 @@
 import React from 'react';
-import { FileText, Euro } from 'lucide-react';
+import { FileText } from 'lucide-react';
 
 const BillCalculation = ({ t, calculations, rates }) => {
   return (
@@ -85,7 +85,6 @@ const BillCalculation = ({ t, calculations, rates }) => {
                 <span className="font-semibold text-gray-800">{t.totalCharges}</span>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-blue-600 flex items-center gap-2">
-                    <Euro className="w-6 h-6" />
                     €{calculations.totalAmount?.toFixed(2)}
                   </div>
                 </div>
