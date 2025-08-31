@@ -32,6 +32,7 @@ export const translations = {
     amountDue: 'Сумма к оплате',
     note: 'Примечание:',
     noteText: 'Расчёт основан на тарифах EAC (Electricity Authority of Cyprus). Актуальные тарифы могут отличаться. Используйте настройки для корректировки под ваши условия.',
+    officialTariffs: 'Официальные тарифы EAC',
     rateNames: {
       electricityGeneration: 'Electricity Generation:',
       networkUsage: 'Network Usage:',
@@ -42,7 +43,8 @@ export const translations = {
       publicServiceObligations: 'Public Service Obl:',
       resESFund: 'RES & ES Fund:',
       vatRate: 'НДС (%):'
-    }
+    },
+    excludeFixedPrices: 'Исключить фиксированные платежи'
   },
   en: {
     title: 'EAC Bill Calculator',
@@ -77,6 +79,7 @@ export const translations = {
     amountDue: 'Amount Due',
     note: 'Note:',
     noteText: 'Calculation is based on EAC (Electricity Authority of Cyprus) tariffs. Current tariffs may differ. Use settings to adjust to your conditions.',
+    officialTariffs: 'Official EAC Tariffs',
     rateNames: {
       electricityGeneration: 'Electricity Generation:',
       networkUsage: 'Network Usage:',
@@ -87,6 +90,7 @@ export const translations = {
       publicServiceObligations: 'Public Service Obl:',
       resESFund: 'RES & ES Fund:',
       vatRate: 'VAT (%):'
-    }
+    },
+    excludeFixedPrices: 'Exclude Fixed Charges'
   }
 };

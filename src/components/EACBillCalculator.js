@@ -18,6 +18,7 @@ const EACBillCalculator = () => {
   const [currentReading, setCurrentReading] = useState(savedInputs.currentReading);
   const [consumption, setConsumption] = useState(savedInputs.consumption);
   const [showSettings, setShowSettings] = useState(false);
+  const [excludeFixedPrices, setExcludeFixedPrices] = useState(false);
   
   const [calculations, setCalculations] = useState({});
 
@@ -52,18 +53,31 @@ const EACBillCalculator = () => {
 
     const kWh = getConsumption();
     
+    // Variable charges (consumption-based)
     const electricityGen = kWh * rates.electricityGeneration;
     const networkUsage = kWh * rates.networkUsage;
     const ancillaryServices = kWh * rates.ancillaryServices;
-    const totalBasicPrice = electricityGen + networkUsage + ancillaryServices + rates.meterDataManagement + rates.electricitySupply;
-    
     const fuelAdjustment = kWh * rates.fuelAdjustment;
     const publicServiceObl = kWh * rates.publicServiceObligations;
-    const totalSubjectToVAT = totalBasicPrice + fuelAdjustment + publicServiceObl;
-    
     const resESFund = kWh * rates.resESFund;
+    
+    // Fixed charges (not consumption-based)
+    const fixedCharges = rates.meterDataManagement + rates.electricitySupply;
+    
+    // Variable charges total
+    const variableCharges = electricityGen + networkUsage + ancillaryServices + fuelAdjustment + publicServiceObl + resESFund;
+    
+    // Totals with and without fixed charges
+    const totalBasicPrice = electricityGen + networkUsage + ancillaryServices + rates.meterDataManagement + rates.electricitySupply;
+    const totalSubjectToVAT = totalBasicPrice + fuelAdjustment + publicServiceObl;
     const vat = totalSubjectToVAT * rates.vatRate;
     const totalAmount = totalSubjectToVAT + resESFund + vat;
+    
+    // Calculate totals without fixed charges
+    const variableBasicPrice = electricityGen + networkUsage + ancillaryServices;
+    const variableSubjectToVAT = variableBasicPrice + fuelAdjustment + publicServiceObl;
+    const variableVat = variableSubjectToVAT * rates.vatRate;
+    const variableTotal = variableSubjectToVAT + resESFund + variableVat;
 
     setCalculations({
       consumption: kWh,
@@ -78,7 +92,14 @@ const EACBillCalculator = () => {
       totalSubjectToVAT: totalSubjectToVAT,
       resESFund: resESFund,
       vat: vat,
-      totalAmount: totalAmount
+      totalAmount: totalAmount,
+      // New calculations for filtering
+      fixedCharges: fixedCharges,
+      variableCharges: variableCharges,
+      variableBasicPrice: variableBasicPrice,
+      variableSubjectToVAT: variableSubjectToVAT,
+      variableVat: variableVat,
+      variableTotal: variableTotal
     });
   }, [inputType, previousReading, currentReading, consumption, rates]);
 
@@ -140,12 +161,24 @@ const EACBillCalculator = () => {
           t={t}
           calculations={calculations}
           rates={rates}
+          excludeFixedPrices={excludeFixedPrices}
+          setExcludeFixedPrices={setExcludeFixedPrices}
         />
       </div>
 
       <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
         <p className="text-sm text-yellow-800">
           <strong>{t.note}</strong> {t.noteText}
+        </p>
+        <p className="text-sm text-yellow-800 mt-2">
+          <a 
+            href="https://www.eac.com.cy/EN/RegulatedActivities/Supply/tariffs/Pages/supply-tariffs.aspx" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 underline font-medium"
+          >
+            {t.officialTariffs} →
+          </a>
         </p>
       </div>
     </div>

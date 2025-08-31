@@ -1,7 +1,7 @@
 import React from 'react';
-import { FileText } from 'lucide-react';
+import { FileText, Euro } from 'lucide-react';
 
-const BillCalculation = ({ t, calculations, rates }) => {
+const BillCalculation = ({ t, calculations, rates, excludeFixedPrices, setExcludeFixedPrices }) => {
   return (
     <div className="lg:col-span-2">
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
@@ -10,8 +10,20 @@ const BillCalculation = ({ t, calculations, rates }) => {
             <FileText className="w-6 h-6" />
             <h2 className="text-xl font-semibold">{t.calculation}</h2>
           </div>
-          <div className="text-blue-100">
+          <div className="text-blue-100 mb-3">
             {t.consumptionLabel} {calculations.consumption?.toFixed(1)} kWh
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="excludeFixed"
+              checked={excludeFixedPrices}
+              onChange={(e) => setExcludeFixedPrices(e.target.checked)}
+              className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+            />
+            <label htmlFor="excludeFixed" className="text-sm text-blue-100 cursor-pointer">
+              {t.excludeFixedPrices}
+            </label>
           </div>
         </div>
 
@@ -34,11 +46,11 @@ const BillCalculation = ({ t, calculations, rates }) => {
                   <span>{t.ancillaryServices} {`{${calculations.consumption?.toFixed(0)} kWh x €${rates.ancillaryServices}}`}</span>
                   <span className="font-mono">€{calculations.ancillaryServices?.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className={`flex justify-between ${excludeFixedPrices ? 'line-through opacity-50' : ''}`}>
                   <span>{t.meterDataManagement}</span>
                   <span className="font-mono">€{calculations.meterDataManagement?.toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className={`flex justify-between ${excludeFixedPrices ? 'line-through opacity-50' : ''}`}>
                   <span>{t.electricitySupply}</span>
                   <span className="font-mono">€{calculations.electricitySupply?.toFixed(2)}</span>
                 </div>
@@ -46,7 +58,7 @@ const BillCalculation = ({ t, calculations, rates }) => {
               <div className="mt-3 pt-2 border-t border-dashed">
                 <div className="flex justify-between font-semibold">
                   <span>{t.totalBasicPrice}</span>
-                  <span className="font-mono">€{calculations.totalBasicPrice?.toFixed(2)}</span>
+                  <span className="font-mono">€{excludeFixedPrices ? calculations.variableBasicPrice?.toFixed(2) : calculations.totalBasicPrice?.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -65,7 +77,7 @@ const BillCalculation = ({ t, calculations, rates }) => {
             <div className="pt-2 border-t border-dashed">
               <div className="flex justify-between font-semibold">
                 <span>{t.totalSubjectToVAT} ({(rates.vatRate * 100).toFixed(0)}%)</span>
-                <span className="font-mono">€{calculations.totalSubjectToVAT?.toFixed(2)}</span>
+                <span className="font-mono">€{excludeFixedPrices ? calculations.variableSubjectToVAT?.toFixed(2) : calculations.totalSubjectToVAT?.toFixed(2)}</span>
               </div>
             </div>
 
@@ -76,7 +88,7 @@ const BillCalculation = ({ t, calculations, rates }) => {
               </div>
               <div className="flex justify-between">
                 <span>{t.vat} ({(rates.vatRate * 100).toFixed(0)}%)</span>
-                <span className="font-mono">€{calculations.vat?.toFixed(2)}</span>
+                <span className="font-mono">€{excludeFixedPrices ? calculations.variableVat?.toFixed(2) : calculations.vat?.toFixed(2)}</span>
               </div>
             </div>
 
@@ -85,7 +97,8 @@ const BillCalculation = ({ t, calculations, rates }) => {
                 <span className="font-semibold text-gray-800">{t.totalCharges}</span>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-blue-600 flex items-center gap-2">
-                    €{calculations.totalAmount?.toFixed(2)}
+                    <Euro className="w-6 h-6" />
+                    {excludeFixedPrices ? calculations.variableTotal?.toFixed(2) : calculations.totalAmount?.toFixed(2)}
                   </div>
                 </div>
               </div>
@@ -97,7 +110,7 @@ const BillCalculation = ({ t, calculations, rates }) => {
           <div className="text-center">
             <div className="text-sm text-gray-600 mb-1">{t.amountDue}</div>
             <div className="text-3xl font-bold text-green-600">
-              €{calculations.totalAmount?.toFixed(2)}
+              €{excludeFixedPrices ? calculations.variableTotal?.toFixed(2) : calculations.totalAmount?.toFixed(2)}
             </div>
           </div>
         </div>
